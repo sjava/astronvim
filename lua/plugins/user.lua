@@ -1,5 +1,3 @@
-if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
-
 -- You can also add or configure plugins by creating files in this `plugins/` folder
 -- PLEASE REMOVE THE EXAMPLES YOU HAVE NO INTEREST IN BEFORE ENABLING THIS FILE
 -- Here are some examples:
@@ -357,5 +355,24 @@ return {
     "yousefhadder/markdown-plus.nvim",
     ft = "markdown",
     opts = {},
+  },
+
+  {
+    "dmtrKovalenko/fff.nvim",
+    build = function() require("fff.download").download_or_build_binary() end,
+    lazy = false,
+    opts = {},
+    dependencies = {
+      {
+        "AstroNvim/astrocore",
+        opts = {
+          mappings = {
+            n = {
+              ["<Leader>ff"] = { function() require("fff").find_files() end, desc = "Find files" },
+            },
+          },
+        },
+      },
+    },
   },
 }
