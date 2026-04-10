@@ -7,7 +7,7 @@ return {
     max_results = 5,
   },
   specs = {
-    "Saghen/blink.cmp",
+    "saghen/blink.cmp",
     opts = function(_, opts)
       table.insert(opts.sources.default, "fuzzy-path")
       return require("astrocore").extend_tbl(opts, {

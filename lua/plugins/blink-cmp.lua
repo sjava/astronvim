@@ -9,7 +9,7 @@ local function copilot_action(action)
 end
 
 return {
-  "Saghen/blink.cmp",
+  "saghen/blink.cmp",
   opts = {
     signature = { enabled = true },
     keymap = { ["<C-e>"] = { copilot_action "dismiss", "hide", "fallback" } },
@@ -36,7 +36,7 @@ return {
   specs = {
     "mikavilpas/blink-ripgrep.nvim",
     specs = {
-      "Saghen/blink.cmp",
+      "saghen/blink.cmp",
       opts = function(_, opts)
         table.insert(opts.sources.default, "ripgrep")
         return require("astrocore").extend_tbl(opts, {
