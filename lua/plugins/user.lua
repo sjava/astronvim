@@ -4,46 +4,6 @@
 
 ---@type LazySpec
 return {
-
-  -- == Examples of Adding Plugins ==
-
-  -- "andweeb/presence.nvim",
-  -- {
-  --   "ray-x/lsp_signature.nvim",
-  --   event = "BufRead",
-  --   config = function() require("lsp_signature").setup() end,
-  -- },
-
-  -- == Examples of Overriding Plugins ==
-
-  -- customize dashboard options
-  -- {
-  --   "folke/snacks.nvim",
-  --   opts = {
-  --     dashboard = {
-  --       preset = {
-  --         header = table.concat({
-  --           " █████  ███████ ████████ ██████   ██████ ",
-  --           "██   ██ ██         ██    ██   ██ ██    ██",
-  --           "███████ ███████    ██    ██████  ██    ██",
-  --           "██   ██      ██    ██    ██   ██ ██    ██",
-  --           "██   ██ ███████    ██    ██   ██  ██████ ",
-  --           "",
-  --           "███    ██ ██    ██ ██ ███    ███",
-  --           "████   ██ ██    ██ ██ ████  ████",
-  --           "██ ██  ██ ██    ██ ██ ██ ████ ██",
-  --           "██  ██ ██  ██  ██  ██ ██  ██  ██",
-  --           "██   ████   ████   ██ ██      ██",
-  --         }, "\n"),
-  --       },
-  --     },
-  --   },
-  -- },
-
-  -- You can disable default plugins as follows:
-  -- { "max397574/better-escape.nvim", enabled = false },
-
-  -- You can also easily customize additional setup of plugins that is outside of the plugin's setup call
   {
     "L3MON4D3/LuaSnip",
     config = function(plugin, opts)
@@ -173,22 +133,6 @@ return {
     },
   },
   {
-    "otavioschwanck/arrow.nvim",
-    event = "VeryLazy",
-    config = function()
-      require("arrow").setup {
-        show_icons = true,
-        leader_key = "<leader>;", -- Recommended to be a single key
-      }
-      vim.keymap.set(
-        "n",
-        "<Leader>;",
-        require("arrow.ui").openMenu,
-        { noremap = true, silent = true, nowait = true, desc = "Open Arrow" }
-      )
-    end,
-  },
-  {
     "briangwaltney/paren-hint.nvim",
     event = "User AstroFile",
     dependencies = {
@@ -205,40 +149,6 @@ return {
     "kevinhwang91/nvim-bqf",
     ft = "qf",
     opts = {},
-  },
-  {
-    "rebelot/heirline.nvim",
-    opts = function(_, opts)
-      local status = require "astroui.status"
-      opts.statusline[3] = status.component.file_info {
-        filename = { modify = ":." },
-        filetype = false,
-      }
-
-      local component = status.component.builder {
-        {
-          provider = function()
-            local arrow_statusline = require "arrow.statusline"
-            local arrow = arrow_statusline.text_for_statusline_with_icons()
-            return status.utils.stylize(arrow, {
-              padding = { left = 1 }, -- pad the right side
-            })
-          end,
-        },
-        hl = { fg = "#A6E3A1" },
-      }
-      table.insert(opts.statusline, 4, component)
-    end,
-  },
-  {
-    "andrewferrier/debugprint.nvim",
-    event = "User AstroFile",
-    dependencies = {
-      "echasnovski/mini.nvim",
-      "nvim-treesitter/nvim-treesitter",
-    },
-    config = function() require("debugprint").setup() end,
-    version = "*",
   },
   {
     "echasnovski/mini.bracketed",
