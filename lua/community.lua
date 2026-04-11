@@ -79,7 +79,23 @@ return {
   { import = "astrocommunity.diagnostics.trouble-nvim" },
   { import = "astrocommunity.utility.noice-nvim" },
   { import = "astrocommunity.motion.mini-bracketed" },
+
   { import = "astrocommunity.motion.flash-nvim" },
+  {
+    "folke/flash.nvim",
+    config = function(_, opts)
+      require("flash").setup(opts)
+      -- vim.api.nvim_set_hl(0, "FlashLabel", { fg = "#ff007c", bold = true })
+      local cp = require("catppuccin.palettes").get_palette()
+      if cp then
+        -- 使用 catppuccin 的调色板颜色（例如 mauve 或 pink）
+        vim.api.nvim_set_hl(0, "FlashLabel", { fg = cp.green, bold = true })
+        vim.api.nvim_set_hl(0, "FlashMatch", { bg = cp.surface1, fg = cp.lavender })
+        vim.api.nvim_set_hl(0, "FlashCurrent", { bg = cp.surface2, fg = cp.peach })
+      end
+    end,
+  },
+
   { import = "astrocommunity.motion.mini-surround" },
   { import = "astrocommunity.motion.vim-matchup" },
   { import = "astrocommunity.motion.nvim-tree-pairs" },
