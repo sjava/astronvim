@@ -11,7 +11,7 @@
   "astroui": { "branch": "main", "commit": "920dd5df6629a9076a11ea10f0d21f4225203585" },
   "better-escape.nvim": { "branch": "master", "commit": "199dcc2643dec5d8dbdab4ec672cf405224dcb3b" },
   "blink-cmp-fuzzy-path": { "branch": "main", "commit": "9d3c4a1b777d6162d53e0f99513235b62bcb1a17" },
-  "blink-ripgrep.nvim": { "branch": "main", "commit": "f96c08376e8fd378dbd17472947a05cbe7dc079b" },
+  "blink-ripgrep.nvim": { "branch": "main", "commit": "4b362ad926ce8843d4dbdc2803413420430e059a" },
   "blink.cmp": { "branch": "main", "commit": "78336bc89ee5365633bcf754d93df01678b5c08f" },
   "caps-word.nvim": { "branch": "main", "commit": "564548ef557e4f873b2e67f0ea91f25042cedfe8" },
   "catppuccin": { "branch": "main", "commit": "426dbebe06b5c69fd846ceb17b42e12f890aedf1" },
