@@ -11,6 +11,7 @@ vim.filetype.add {
     mpx = "vue",
     http = "http",
     wxs = "javascript",
+    svg = "html",
   },
   filename = {
     ["Foofile"] = "fooscript",
