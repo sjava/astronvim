@@ -117,7 +117,7 @@ return {
       t = {
         -- setting a mapping to false will disable it
         -- ["<esc>"] = false,
-        ["<esc>"] = { "<C-\\><C-n>", desc = "escape terminal" },
+        -- ["<esc>"] = { "<C-\\><C-n>", desc = "escape terminal" },
       },
     },
   },
