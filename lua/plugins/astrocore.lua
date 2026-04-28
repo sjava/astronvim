@@ -58,6 +58,11 @@ return {
         opencode_opts = {
           lsp = {
             enabled = true,
+            handlers = {
+              hover = {
+                enabled = false,
+              },
+            },
           },
         },
       },
