@@ -102,6 +102,33 @@ return {
   {
     "rmagatti/goto-preview",
     config = function() require("goto-preview").setup {} end,
+    specs = {
+      {
+        "AstroNvim/astrocore",
+        ---@param opts AstroCoreOpts
+        opts = function(_, opts)
+          local maps = assert(opts.mappings)
+
+          maps.n["gp"] = { desc = "Goto Preview" }
+          maps.n["gpd"] = {
+            "<cmd>lua require('goto-preview').goto_preview_definition()<CR>",
+            desc = "Goto Preview Definition",
+          }
+          maps.n["gpi"] = {
+            "<cmd>lua require('goto-preview').goto_preview_implementation()<CR>",
+            desc = "Goto Preview Implementation",
+          }
+          maps.n["gpt"] = {
+            "<cmd>lua require('goto-preview').goto_preview_type_definition()<CR>",
+            desc = "Goto Preview Type Definition",
+          }
+          maps.n["gpr"] = {
+            "<cmd>lua require('goto-preview').goto_preview_references()<CR>",
+            desc = "Goto Preview References",
+          }
+        end,
+      },
+    },
   },
   {
     "vxpm/ferris.nvim",

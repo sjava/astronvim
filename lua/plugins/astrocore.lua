@@ -106,11 +106,6 @@ return {
           end,
           desc = "Close buffer from tabline",
         },
-        ["gp"] = { desc = "Goto Preview" },
-        ["gpd"] = { "<cmd>lua require('goto-preview').goto_preview_definition()<CR>", desc = "definition" },
-        ["gpt"] = { "<cmd>lua require('goto-preview').goto_preview_type_definition()<CR>", desc = "type definition" },
-        ["gpi"] = { "<cmd>lua require('goto-preview').goto_preview_implementation()<CR>", desc = "implementation" },
-        ["gpr"] = { "<cmd>lua require('goto-preview').goto_preview_references()<CR>", desc = "references" },
 
         -- tables with just a `desc` key will be registered with which-key if it's installed
         -- this is useful for naming menus
