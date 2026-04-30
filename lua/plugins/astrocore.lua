@@ -64,6 +64,50 @@ return {
               },
             },
           },
+          server = {
+            -- 启动：在新标签页 (Tab) 中打开
+            start = function()
+              vim
+                .system({
+                  "kitty",
+                  "@",
+                  "launch",
+                  "--type=tab", -- 关键改动：从 window 改为 tab
+                  "--tab-title=opencode", -- 给标签页起个名字，方便识别
+                  "opencode",
+                  "--agent",
+                  "plan",
+                  "--port",
+                })
+                :wait()
+
+              -- 将焦点切回之前的标签页（Neovim 所在的标签页）
+              -- Kitty 的 recent:1 在标签页维度同样适用
+              vim.system { "kitty", "@", "focus-window", "--match", "recent:1" }
+            end,
+
+            -- 停止：匹配标签页标题并关闭
+            stop = function()
+              vim.system {
+                "kitty",
+                "@",
+                "close-tab", -- 关键改动：关闭整个标签页
+                "--match",
+                "title:opencode",
+              }
+            end,
+
+            -- 切换逻辑
+            toggle = function()
+              -- 检查是否存在名为 opencode 的标签页
+              local check = vim.system({ "kitty", "@", "ls" }):wait()
+              if check.stdout and check.stdout:find '"title": "opencode"' then
+                vim.g.opencode_opts.server.stop()
+              else
+                vim.g.opencode_opts.server.start()
+              end
+            end,
+          },
         },
       },
     },

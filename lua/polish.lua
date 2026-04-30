@@ -57,6 +57,14 @@ vim.api.nvim_create_autocmd({ "BufLeave", "WinLeave" }, {
   desc = "Absolutnumber unfoccused leave",
 })
 
+-- 退出 Neovim 时自动关闭 Kitty 窗口
+vim.api.nvim_create_autocmd("VimLeave", {
+  callback = function()
+    -- 使用 pcall 防止退出时因为窗口已手动关闭而报错
+    pcall(vim.g.opencode_opts.server.stop)
+  end,
+})
+
 if vim.g.neovide then
   vim.g.neovide_hide_mouse_when_typing = true
   vim.g.neovide_fullscreen = true
