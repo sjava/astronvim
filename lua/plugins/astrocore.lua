@@ -83,7 +83,7 @@ return {
 
               -- 将焦点切回之前的标签页（Neovim 所在的标签页）
               -- Kitty 的 recent:1 在标签页维度同样适用
-              vim.system { "kitty", "@", "focus-window", "--match", "recent:1" }
+              vim.system { "kitty", "@", "focus-tab", "--match", "recent:1" }
             end,
 
             -- 停止：匹配标签页标题并关闭
