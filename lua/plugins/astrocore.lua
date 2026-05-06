@@ -73,7 +73,7 @@ return {
                   "@",
                   "launch",
                   "--type=tab", -- 关键改动：从 window 改为 tab
-                  "--tab-title=opencode", -- 给标签页起个名字，方便识别
+                  "--tab-title=opencode_ai", -- 给标签页起个名字，方便识别
                   "opencode",
                   "--agent",
                   "plan",
@@ -93,7 +93,7 @@ return {
                 "@",
                 "close-tab", -- 关键改动：关闭整个标签页
                 "--match",
-                "title:opencode",
+                "title:opencode_ai",
               }
             end,
 
@@ -101,7 +101,7 @@ return {
             toggle = function()
               -- 检查是否存在名为 opencode 的标签页
               local check = vim.system({ "kitty", "@", "ls" }):wait()
-              if check.stdout and check.stdout:find '"title": "opencode"' then
+              if check.stdout and check.stdout:find '"title": "opencode_ai"' then
                 vim.g.opencode_opts.server.stop()
               else
                 vim.g.opencode_opts.server.start()
