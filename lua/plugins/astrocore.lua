@@ -67,6 +67,7 @@ return {
           server = {
             -- 启动：在新标签页 (Tab) 中打开
             start = function()
+              local cwd = vim.fn.getcwd()
               vim
                 .system({
                   "kitty",
@@ -74,6 +75,7 @@ return {
                   "launch",
                   "--type=tab", -- 关键改动：从 window 改为 tab
                   "--tab-title=opencode_ai", -- 给标签页起个名字，方便识别
+                  "--cwd=" .. cwd,
                   "opencode",
                   "--agent",
                   "plan",
