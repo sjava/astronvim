@@ -78,7 +78,7 @@ return {
                   "--cwd=" .. cwd,
                   "opencode",
                   "--agent",
-                  "plan",
+                  "build",
                   "--port",
                 })
                 :wait()
