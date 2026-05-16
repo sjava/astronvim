@@ -98,8 +98,6 @@ return {
   { import = "astrocommunity.editing-support.treesj" },
   { import = "astrocommunity.editing-support.text-case-nvim" },
 
-  { import = "astrocommunity.ai.codecompanion-nvim" },
-
   { import = "astrocommunity.test.neotest" },
   { import = "astrocommunity.recipes.astrolsp-no-insert-inlay-hints" },
   { import = "astrocommunity.recipes.picker-lsp-mappings" },
