@@ -83,6 +83,7 @@ return {
 
   { import = "astrocommunity.motion.flash-nvim" },
 
+  { import = "astrocommunity.icon.mini-icons" },
   { import = "astrocommunity.motion.mini-surround" },
   { import = "astrocommunity.motion.vim-matchup" },
   { import = "astrocommunity.motion.nvim-tree-pairs" },
@@ -111,6 +112,5 @@ return {
   { import = "astrocommunity.fuzzy-finder.snacks-picker" },
 
   { import = "astrocommunity.ai.opencode-nvim" },
-
-  { import = "astrocommunity.icon.mini-icons" },
+  { import = "astrocommunity.git.diffview-nvim" },
 }
