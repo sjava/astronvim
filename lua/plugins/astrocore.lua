@@ -32,8 +32,10 @@ return {
         mpx = "vue",
         http = "http",
         wxs = "javascript",
+        svg = "html",
       },
       filename = {
+        ["Foofile"] = "fooscript",
         [".foorc"] = "fooscript",
       },
       pattern = {
@@ -53,7 +55,7 @@ return {
         -- configure global vim variables (vim.g)
         -- NOTE: `mapleader` and `maplocalleader` must be set in the AstroNvim opts or before `lazy.setup`
         -- This can be found in the `lua/lazy_setup.lua` file
-        python3_host_prog = "python",
+        python3_host_prog = "python3",
         node_host_prog = "node",
         opencode_opts = {
           lsp = {
@@ -64,52 +66,6 @@ return {
               },
             },
           },
-          -- server = {
-          --   -- 启动：在新标签页 (Tab) 中打开
-          --   start = function()
-          --     local cwd = vim.fn.getcwd()
-          --     vim
-          --       .system({
-          --         "kitty",
-          --         "@",
-          --         "launch",
-          --         "--type=tab", -- 关键改动：从 window 改为 tab
-          --         "--tab-title=opencode_ai", -- 给标签页起个名字，方便识别
-          --         "--cwd=" .. cwd,
-          --         "opencode",
-          --         "--agent",
-          --         "build",
-          --         "--port",
-          --       })
-          --       :wait()
-          --
-          --     -- 将焦点切回之前的标签页（Neovim 所在的标签页）
-          --     -- Kitty 的 recent:1 在标签页维度同样适用
-          --     vim.system { "kitty", "@", "focus-tab", "--match", "recent:1" }
-          --   end,
-          --
-          --   -- 停止：匹配标签页标题并关闭
-          --   stop = function()
-          --     vim.system {
-          --       "kitty",
-          --       "@",
-          --       "close-tab", -- 关键改动：关闭整个标签页
-          --       "--match",
-          --       "title:opencode_ai",
-          --     }
-          --   end,
-          --
-          --   -- 切换逻辑
-          --   toggle = function()
-          --     -- 检查是否存在名为 opencode 的标签页
-          --     local check = vim.system({ "kitty", "@", "ls" }):wait()
-          --     if check.stdout and check.stdout:find '"title": "opencode_ai"' then
-          --       vim.g.opencode_opts.server.stop()
-          --     else
-          --       vim.g.opencode_opts.server.start()
-          --     end
-          --   end,
-          -- },
         },
       },
     },
@@ -137,10 +93,6 @@ return {
             vim.api.nvim_set_current_win(picked_window_id)
           end,
           desc = "Pick a window",
-        },
-        ["<Leader>wc"] = {
-          function() require("nvim_winpick").pick_close_window() end,
-          desc = "Pick close window",
         },
         -- mappings seen under group name "Buffer"
         ["<Leader>b"] = { desc = "Buffers" },

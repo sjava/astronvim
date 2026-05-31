@@ -2,28 +2,11 @@
 -- This is just pure lua so anything that doesn't
 -- fit in the normal config locations above can go here
 
--- Set up custom filetypes
-vim.filetype.add {
-  extension = {
-    foo = "fooscript",
-    wxml = "html",
-    wxss = "css",
-    mpx = "vue",
-    http = "http",
-    wxs = "javascript",
-    svg = "html",
-  },
-  filename = {
-    ["Foofile"] = "fooscript",
-  },
-  pattern = {
-    ["~/%.config/foo/.*"] = "fooscript",
-  },
-}
+-- NOTE: custom filetypes are now configured in lua/plugins/astrocore.lua opts.filetypes
 
 vim.cmd [[
       command! -nargs=* -bang -range -complete=filetype NN
-      \ call luaeval("require('yode-nvim').createSeditorReplace(_A[1], _A[2])", [<line1>, <line2>])
+      \ call luaeval("pcall(require('yode-nvim').createSeditorReplace, _A[1], _A[2])", [<line1>, <line2>])
       \ | set filetype=<args>
     ]]
 vim.cmd [[autocmd FileType * set formatoptions-=ro]]
@@ -44,7 +27,7 @@ vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter" }, {
       vim.wo.relativenumber = true
     end
   end,
-  desc = "Absolutnumber unfoccused enter",
+  desc = "Absolute number unfocused enter",
 })
 vim.api.nvim_create_autocmd({ "BufLeave", "WinLeave" }, {
   group = augroup,
@@ -54,16 +37,8 @@ vim.api.nvim_create_autocmd({ "BufLeave", "WinLeave" }, {
       vim.wo.relativenumber = false
     end
   end,
-  desc = "Absolutnumber unfoccused leave",
+  desc = "Absolute number unfocused leave",
 })
-
--- 退出 Neovim 时自动关闭opencode Kitty 窗口
--- vim.api.nvim_create_autocmd("VimLeave", {
---   callback = function()
---     -- 使用 pcall 防止退出时因为窗口已手动关闭而报错
---     pcall(vim.g.opencode_opts.server.stop)
---   end,
--- })
 
 if vim.g.neovide then
   vim.g.neovide_hide_mouse_when_typing = true
