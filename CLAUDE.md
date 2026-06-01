@@ -6,57 +6,84 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Personal AstroNvim v6+ user configuration. Deployed to `~/.config/nvim`. Uses lazy.nvim as plugin manager.
 
+## Deployment
+
+This repo is deployed to `~/.config/nvim`. The standard install flow: back up existing nvim config → `git clone <this-repo> ~/.config/nvim` → `nvim` (lazy.nvim auto-bootstraps and installs all plugins).
+
 ## File architecture
 
 ```
 init.lua                  # Entry point: bootstraps lazy.nvim → lazy_setup → polish
 lua/lazy_setup.lua        # lazy.nvim setup; imports AstroNvim core, community, user plugins
 lua/community.lua         # Imports from AstroCommunity (lang packs, editing, motion, etc.)
-lua/polish.lua            # Runs last; custom Lua that doesn't fit plugin specs
+lua/polish.lua            # Runs last; custom Lua/Vimscript that doesn't fit plugin specs
 lua/plugins/*.lua         # One file per plugin/group; each returns a LazySpec
 lazy-lock.json            # Pinned plugin versions (lazy.nvim lockfile)
 selene.toml               # selene linter config (Lua linting, neovim std)
 neovim.yml                # luacheck config (globals: vim)
+.stylua.toml              # Formatter config: 120 cols, 2-space indent, no call parens
+.luarc.json               # Disables built-in Lua formatter (stylua used instead)
+.neoconf.json             # Neodev config for lua_ls (enables Neovim API completions)
 ```
 
 ## How config loads
 
-1. `init.lua` clones lazy.nvim if missing, adds it to rtp
+1. `init.lua` clones lazy.nvim if missing, adds it to rtp, then calls `require "lazy_setup"` and `require "polish"`
 2. `lazy_setup.lua` calls `require("lazy").setup()` with three import groups:
    - `astronvim.plugins` — AstroNvim built-in plugins (astrocore, astrolsp, astroui, treesitter, etc.)
    - `community` — AstroCommunity packs (language support, editing tools, motion, etc.)
-   - `plugins` — user overrides and additional plugins
-3. `polish.lua` runs after lazy setup completes — raw Vimscript/Lua for edge cases
+   - `plugins` — user overrides and additional plugins (one file per plugin/group)
+3. `polish.lua` runs immediately after `lazy_setup` is `require`d — it doesn't wait for lazy.nvim to finish loading plugins. Contains: the `:NN` command (yode-nvim editor replacement with filetype), an autocmd stripping `formatoptions-=ro` on all filetypes, relative number toggling on focus/blur (excluding snacks_dashboard, neo-tree, Trouble), and Neovide GUI settings.
 
 ## Key plugin configs
 
-- **astrocore.lua** — Central mappings (`<Leader>` = space), vim options, filetypes, autocommands, features toggles (autopairs, cmp, diagnostics, etc.)
-- **astrolsp.lua** — LSP features (codelens, inlay hints, format-on-save), server configs, on_attach (rust-analyzer keymaps via rustaceanvim + ferris.nvim)
-- **astroui.lua** — Colorscheme (catppuccin), highlight overrides, icons
-- **blink-cmp.lua** — Completion engine with copilot integration, ripgrep source, buffer filtering
-- **mason.lua** — Auto-installs lua-language-server, stylua, debugpy, tree-sitter-cli, prettier
-- **treesitter.lua** — Highlight + indent enabled, auto_install on, ensures lua/vim parsers
-- **user.lua** — Misc plugins: autopairs rules, git tools, window management, testing (vim-test), HTTP client (kulala.nvim), markdown preview, etc.
+- **astrocore.lua** — Central mappings (`<Leader>` = space), vim options, filetypes, autocommands, features toggles (autopairs, cmp, diagnostics, etc.). Also configures treesitter, opencode LSP.
+- **astrolsp.lua** — LSP features (codelens, inlay hints, format-on-save), server configs, custom elixirls cmd. Rust-specific keymaps via rustaceanvim + ferris.nvim in `on_attach`.
+- **astroui.lua** — Colorscheme (catppuccin-nvim), highlight overrides, LSP loading icons.
+- **blink-cmp.lua** — Completion engine with copilot integration (`<C-e>` to dismiss), ripgrep source via `blink-ripgrep.nvim`, cmdline completion, buffer filtering (excludes non-normal buftypes).
+- **blink-cmp-fuzzy-path.lua** — Fuzzy path completion for markdown/json files (trigger: `@`). Injects itself into blink.cmp's sources via `specs`.
+- **catppuccin.lua** — Full catppuccin integration config: dim_inactive, term_colors, per-plugin integration toggles (blink_cmp, snacks, noice, mini, etc.), native_lsp virtual_text/underlines styling.
+- **mason.lua** — Auto-installs lua-language-server, stylua, debugpy, tree-sitter-cli, prettier. Configures prettier parser mapping for JS/SCSS/JSON/HTML/Vue.
+- **none-ls.lua** — Null-ls/none-ls formatter/linter config stub (currently empty, sources appended via `list_insert_unique`).
+- **treesitter.lua** — Extends astrocore treesitter opts: highlight + indent enabled, auto_install on, ensures lua/vim parsers.
+- **user.lua** — Catch-all: autopairs custom rules, window management (windows.nvim, window-picker), testing (vim-test + shtuff strategy), HTTP client (kulala.nvim), markdown preview (markview.nvim), goto-preview, focus.nvim, paren-hint, caps-word, rip-substitute, in-and-out, and more. Each plugin block follows the standard spec/opts/dependencies pattern.
+- **neovim_tips.lua** — Startup tips from `neovim_tips/user_tips.md`.
 
 ## Plugin configuration pattern
 
-Every plugin file returns a `LazySpec`. Two patterns for extending AstroNvim defaults:
+Every plugin file returns a `LazySpec` (a table or list of tables). Two patterns for extending AstroNvim defaults:
 
-1. **Override plugin's own opts**: return a spec with the same plugin name and new `opts`
-2. **Extend astrocore/astroui**: use `specs` to hook into core plugin configs, e.g.:
+1. **Override plugin's own opts**: return a spec with the same plugin name and new `opts` — lazy.nvim deep-merges opts tables.
 
-```lua
-return {
-  "some-plugin",
-  opts = { ... },
-  specs = {
-    { "AstroNvim/astrocore", opts = function(_, opts)
-        local maps = assert(opts.mappings)
-        maps.n["<Leader>x"] = { ":Something<CR>", desc = "Do thing" }
-    end },
-  },
-}
-```
+2. **Extend another plugin via `specs`**: a plugin can inject config into another plugin's spec. Two directions:
+   - **User plugin → AstroNvim core** (e.g., adding keymaps to astrocore):
+     ```lua
+     return {
+       "my-plugin",
+       specs = {
+         { "AstroNvim/astrocore", opts = function(_, opts)
+             local maps = assert(opts.mappings)
+             maps.n["<Leader>x"] = { ":Something<CR>", desc = "Do thing" }
+         end },
+       },
+     }
+     ```
+   - **Plugin → another plugin** (e.g., blink-cmp-fuzzy-path injecting into blink.cmp):
+     ```lua
+     return {
+       "newtoallofthis123/blink-cmp-fuzzy-path",
+       dependencies = { "saghen/blink.cmp" },
+       specs = {
+         "saghen/blink.cmp",
+         opts = function(_, opts)
+           table.insert(opts.sources.default, "fuzzy-path")
+           return require("astrocore").extend_tbl(opts, { ... })
+         end,
+       },
+     }
+     ```
+
+3. **Use `astrocore.extend_tbl` / `astrocore.list_insert_unique`** when merging tables in opts overrides to avoid clobbering upstream defaults.
 
 ## Linting/formatting
 
