@@ -81,6 +81,11 @@ return {
     mappings = {
       n = {
         -- a `cond` key can provided as the string of a server capability to be required to attach, or a function with `client` and `bufnr` parameters from the `on_attach` that returns a boolean
+        gD = {
+          function() require("lspeek").peek_definition() end,
+          desc = "Peek Definition (lspeek)",
+          cond = "textDocument/declaration",
+        },
         ["<Leader>uY"] = {
           function() require("astrolsp.toggles").buffer_semantic_tokens() end,
           desc = "Toggle LSP semantic highlight (buffer)",
