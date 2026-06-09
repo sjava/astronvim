@@ -155,21 +155,6 @@ return {
     end,
   },
   {
-    "OXY2DEV/markview.nvim",
-    lazy = false,
-    opts = {
-      preview = {
-        filetypes = { "markdown" },
-        ignore_buftypes = {},
-      },
-    },
-    dependencies = {
-      "nvim-treesitter/nvim-treesitter",
-      "nvim-tree/nvim-web-devicons",
-      "saghen/blink.cmp",
-    },
-  },
-  {
     "ysmb-wtsg/in-and-out.nvim",
     keys = {
       {

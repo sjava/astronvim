@@ -61,4 +61,7 @@ return {
 
   { import = "astrocommunity.ai.opencode-nvim" },
   { import = "astrocommunity.git.diffview-nvim" },
+
+  { import = "astrocommunity.markdown-and-latex.render-markdown-nvim" },
+  { import = "astrocommunity.media.image-nvim" },
 }
