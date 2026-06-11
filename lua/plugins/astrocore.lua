@@ -57,16 +57,6 @@ return {
         -- This can be found in the `lua/lazy_setup.lua` file
         python3_host_prog = "python3",
         node_host_prog = "node",
-        opencode_opts = {
-          lsp = {
-            enabled = true,
-            handlers = {
-              hover = {
-                enabled = false,
-              },
-            },
-          },
-        },
       },
     },
     -- Mappings can be configured through AstroCore as well.
