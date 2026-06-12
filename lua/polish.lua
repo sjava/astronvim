@@ -40,21 +40,15 @@ vim.api.nvim_create_autocmd({ "BufLeave", "WinLeave" }, {
   desc = "Absolute number unfocused leave",
 })
 
-if vim.g.neovide then
-  vim.g.neovide_hide_mouse_when_typing = true
-  vim.g.neovide_fullscreen = true
-  vim.g.neovide_refresh_rate = 60
-
-  vim.g.neovide_padding_top = 0
-  vim.g.neovide_padding_bottom = 0
-  vim.g.neovide_padding_right = 0
-  vim.g.neovide_padding_left = 0
-
-  vim.keymap.set("c", "<C-v>", "<C-R>+") -- Paste command mode
-
-  -- Allow clipboard copy paste in neovim
-  vim.api.nvim_set_keymap("", "<C-S-v>", "+p<CR>", { noremap = true, silent = true })
-  vim.api.nvim_set_keymap("!", "<C-S-v>", "<C-R>+", { noremap = true, silent = true })
-  vim.api.nvim_set_keymap("t", "<C-S-v>", '<C-\\><C-N>"+pi', { noremap = true, silent = true })
-  vim.api.nvim_set_keymap("v", "<C-S-v>", "<C-R>+", { noremap = true, silent = true })
-end
+vim.api.nvim_create_autocmd({ "WinEnter", "BufWinEnter" }, {
+  pattern = "*",
+  callback = function()
+    -- 检测当前窗口是否开启了 diff 模式
+    if vim.wo.diff then
+      -- 禁用当前窗口的 winbar（dropbar 依赖 winbar 显示）
+      vim.wo.winbar = ""
+      -- 如果 dropbar 还在强行渲染，可以调用其内部 API 关闭（可选）
+      pcall(function() require("dropbar.api").goto_context(-1) end)
+    end
+  end,
+})
