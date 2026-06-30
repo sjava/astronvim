@@ -52,3 +52,6 @@ vim.api.nvim_create_autocmd({ "WinEnter", "BufWinEnter" }, {
     end
   end,
 })
+
+vim.g.clipboard = "osc52"
+

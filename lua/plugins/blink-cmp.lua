@@ -10,6 +10,7 @@ end
 
 return {
   "saghen/blink.cmp",
+  build = vim.fn.has('mac') == 1 and 'cargo build --release' or nil,
   opts = {
     signature = { enabled = true },
     keymap = { ["<C-e>"] = { copilot_action "dismiss", "hide", "fallback" } },
