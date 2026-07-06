@@ -60,5 +60,14 @@ return {
   { import = "astrocommunity.fuzzy-finder.snacks-picker" },
 
   { import = "astrocommunity.markdown-and-latex.render-markdown-nvim" },
+  {
+    "MeanderingProgrammer/render-markdown.nvim",
+    opts = {
+      anti_conceal = {
+        enabled = false,
+      },
+    },
+  },
+
   { import = "astrocommunity.media.image-nvim" },
 }
