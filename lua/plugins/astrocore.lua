@@ -103,6 +103,10 @@ return {
         -- setting a mapping to false will disable it
         -- ["<C-S>"] = false,
       },
+      i = {
+        ["<C-a>"] = { "<C-o>^", desc = "move to beginning of line" },
+        ["<C-e>"] = { "<C-o>A", desc = "move to end of line" },
+      },
       t = {
         -- setting a mapping to false will disable it
         -- ["<esc>"] = false,

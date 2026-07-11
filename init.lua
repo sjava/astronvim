@@ -24,5 +24,4 @@ if not pcall(require, "lazy") then
 end
 
 require "lazy_setup"
-require("ai_copy").setup()
 require "polish"

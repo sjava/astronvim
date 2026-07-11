@@ -52,3 +52,10 @@ vim.api.nvim_create_autocmd({ "WinEnter", "BufWinEnter" }, {
     end
   end,
 })
+
+require("ai_copy").setup()
+
+vim.keymap.set("n", "<leader>tt", function() require("toggle_task").toggle() end, {
+  desc = "Toggle Markdown Task",
+  silent = true,
+})
