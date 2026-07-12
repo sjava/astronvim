@@ -95,6 +95,7 @@ return {
           end,
           desc = "Close buffer from tabline",
         },
+        ["<Leader>um"] = { function() require("render-markdown").toggle() end, desc = "Toggle render-markdown" },
 
         -- tables with just a `desc` key will be registered with which-key if it's installed
         -- this is useful for naming menus
