@@ -71,4 +71,6 @@ return {
 
   { import = "astrocommunity.media.image-nvim" },
   { import = "astrocommunity.note-taking.zk-nvim" },
+
+  { import = "astrocommunity.ai.opencode-nvim" },
 }
