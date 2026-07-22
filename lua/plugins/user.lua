@@ -295,12 +295,4 @@ return {
       preset = "helix",
     },
   },
-  {
-    "barrettruth/diffs.nvim",
-    init = function()
-      vim.g.diffs = {
-        gitsigns = true,
-      }
-    end,
-  },
 }
