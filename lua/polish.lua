@@ -59,3 +59,6 @@ vim.keymap.set("n", "<leader>tt", function() require("toggle_task").toggle() end
   desc = "Toggle Markdown Task",
   silent = true,
 })
+
+-- only enable input method switching on macOS
+if vim.fn.has "mac" == 1 then require("im").setup() end
