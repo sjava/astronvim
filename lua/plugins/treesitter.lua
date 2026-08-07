@@ -12,6 +12,8 @@ return {
       highlight = true, -- enable/disable treesitter based highlighting
       indent = true, -- enable/disable treesitter based indentation
       auto_install = true, -- enable/disable automatic installation of detected languages
+      -- tmux parser removed: returning false blocks highlighting AND auto-install for it
+      enabled = function(lang) return lang ~= "tmux" end,
       ensure_installed = {
         "lua",
         "vim",
