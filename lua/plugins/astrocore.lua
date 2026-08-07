@@ -3,6 +3,30 @@
 -- NOTE: We highly recommend setting up the Lua Language Server (`:LspInstall lua_ls`)
 --       as this provides autocomplete and documentation while editing
 
+-- Clipboard: OSC 52 for copy and paste. Inside zellij on macOS, paste reads
+-- the system clipboard via pbpaste instead, because zellij doesn't relay
+-- OSC 52 read queries.
+local clipboard = "osc52" ---@type string|table
+if vim.env.ZELLIJ ~= nil and vim.fn.has "macunix" == 1 then
+  local osc52 = require "vim.ui.clipboard.osc52"
+  -- Over SSH, dual-write on copy: OSC 52 reaches the client's clipboard,
+  -- pbcopy the Mac's (so "+y followed by "+p round-trips via pbpaste).
+  local dual = vim.env.SSH_CONNECTION ~= nil
+  local function copy(reg)
+    local osc_copy = osc52.copy(reg)
+    if not dual then return osc_copy end
+    return function(lines, regtype)
+      osc_copy(lines, regtype)
+      vim.fn.system({ "pbcopy" }, table.concat(lines, "\n"))
+    end
+  end
+  clipboard = {
+    name = dual and "osc52+pbcopy-copy/pbpaste-paste" or "osc52-copy+pbpaste-paste",
+    copy = { ["+"] = copy "+", ["*"] = copy "*" },
+    paste = { ["+"] = { "pbpaste" }, ["*"] = { "pbpaste" } },
+  }
+end
+
 ---@type LazySpec
 return {
   "AstroNvim/astrocore",
@@ -57,7 +81,7 @@ return {
         -- This can be found in the `lua/lazy_setup.lua` file
         python3_host_prog = "python",
         node_host_prog = "node",
-        clipboard = "osc52",
+        clipboard = clipboard, -- defined at top of file
       },
     },
     -- Mappings can be configured through AstroCore as well.
