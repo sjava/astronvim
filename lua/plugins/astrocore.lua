@@ -3,28 +3,6 @@
 -- NOTE: We highly recommend setting up the Lua Language Server (`:LspInstall lua_ls`)
 --       as this provides autocomplete and documentation while editing
 
--- Clipboard: copy via OSC 52 (reaches the local terminal through zellij/SSH).
--- Paste via the host's native tool: terminals/multiplexers don't answer OSC 52
--- read queries. Hosts without any tool fall back to an OSC 52 read attempt.
-local osc52 = require "vim.ui.clipboard.osc52"
-local paste_cmd ---@type string[]?
-if vim.fn.has "macunix" == 1 then
-  paste_cmd = { "pbpaste" }
-elseif vim.fn.executable "wl-paste" == 1 then
-  paste_cmd = { "wl-paste", "--no-newline" }
-elseif vim.fn.executable "xclip" == 1 then
-  paste_cmd = { "xclip", "-o", "-selection", "clipboard" }
-elseif vim.fn.executable "xsel" == 1 then
-  paste_cmd = { "xsel", "-o", "-b" }
-end
-
-local clipboard = {
-  name = "osc52-copy+" .. (paste_cmd and (paste_cmd[1] .. "-paste") or "osc52-paste"),
-  copy = { ["+"] = osc52.copy "+", ["*"] = osc52.copy "*" },
-  paste = paste_cmd and { ["+"] = paste_cmd, ["*"] = paste_cmd }
-    or { ["+"] = osc52.paste "+", ["*"] = osc52.paste "*" },
-}
-
 ---@type LazySpec
 return {
   "AstroNvim/astrocore",
@@ -79,7 +57,7 @@ return {
         -- This can be found in the `lua/lazy_setup.lua` file
         python3_host_prog = "python",
         node_host_prog = "node",
-        clipboard = clipboard, -- defined at top of file
+        clipboard = "osc52",
       },
     },
     -- Mappings can be configured through AstroCore as well.
