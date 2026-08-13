@@ -31,6 +31,11 @@ function M.setup(opts)
   vim.api.nvim_create_autocmd("CmdlineLeave", {
     callback = function() switch_im(english) end,
   })
+
+  -- 从其他应用切回 Neovim 时切英文
+  vim.api.nvim_create_autocmd("FocusGained", {
+    callback = function() switch_im(english) end,
+  })
 end
 
 return M
