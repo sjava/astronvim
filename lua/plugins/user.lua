@@ -51,10 +51,6 @@ return {
     event = "User AstroFile",
   },
   {
-    "h-hg/fcitx.nvim",
-    event = "User AstroFile",
-  },
-  {
     "anuvyklack/windows.nvim",
     dependencies = {
       "anuvyklack/middleclass",
