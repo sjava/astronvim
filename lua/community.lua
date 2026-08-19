@@ -57,6 +57,25 @@ return {
 
   { import = "astrocommunity.search.grug-far-nvim" },
   { import = "astrocommunity.bars-and-lines.dropbar-nvim" },
+  {
+    "Bekaboo/dropbar.nvim",
+    opts = function(_, opts)
+      local default_enable = require("dropbar.configs").opts.bar.enable
+      opts.bar = opts.bar or {}
+      opts.bar.enable = function(buf, win, ...)
+        -- 不渲染在 diff 窗口（vim diff 或 codediff pane）上的 winbar
+        if vim.api.nvim_get_option_value("diff", { win = win }) then return false end
+        local session_mod = package.loaded["codediff.ui.lifecycle.session"]
+        if session_mod then
+          for _, sess in pairs(session_mod.get_active_diffs()) do
+            if sess.original_win == win or sess.modified_win == win then return false end
+          end
+        end
+        return default_enable(buf, win, ...)
+      end
+      return opts
+    end,
+  },
   { import = "astrocommunity.fuzzy-finder.snacks-picker" },
 
   { import = "astrocommunity.markdown-and-latex.render-markdown-nvim" },

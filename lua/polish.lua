@@ -40,17 +40,134 @@ vim.api.nvim_create_autocmd({ "BufLeave", "WinLeave" }, {
   desc = "Absolute number unfocused leave",
 })
 
-vim.api.nvim_create_autocmd({ "WinEnter", "BufWinEnter" }, {
-  pattern = "*",
-  callback = function()
-    -- 检测当前窗口是否开启了 diff 模式
-    if vim.wo.diff then
-      -- 禁用当前窗口的 winbar（dropbar 依赖 winbar 显示）
-      vim.wo.winbar = ""
-      -- 如果 dropbar 还在强行渲染，可以调用其内部 API 关闭（可选）
-      pcall(function() require("dropbar.api").goto_context(-1) end)
+local diff_group = vim.api.nvim_create_augroup("MyDiff", { clear = true })
+local md_diff_disabled = {}
+
+local function codediff_buffer(buf)
+  local session_mod = package.loaded["codediff.ui.lifecycle.session"]
+  if not session_mod then return false end
+  for _, sess in pairs(session_mod.get_active_diffs()) do
+    for _, win in ipairs { sess.original_win, sess.modified_win } do
+      if win and vim.api.nvim_win_is_valid(win) and vim.api.nvim_win_get_buf(win) == buf then return true end
     end
+  end
+  return false
+end
+
+local function has_diff_window(buf)
+  for _, win in ipairs(vim.fn.win_findbuf(buf)) do
+    if vim.api.nvim_get_option_value("diff", { win = win }) then return true end
+  end
+  return false
+end
+
+local function set_render_markdown(buf, enable)
+  if vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].filetype == "markdown" then
+    pcall(require("render-markdown.core.manager").set_buf, buf, enable)
+  end
+end
+
+local function sync_render_markdown_diff()
+  local buf = vim.api.nvim_get_current_buf()
+  if vim.bo[buf].filetype ~= "markdown" then return end
+  if codediff_buffer(buf) or has_diff_window(buf) then
+    md_diff_disabled[buf] = true
+    set_render_markdown(buf, false)
+  elseif md_diff_disabled[buf] then
+    md_diff_disabled[buf] = nil
+    set_render_markdown(buf, true)
+  end
+end
+
+local function reenable_all()
+  for buf in pairs(md_diff_disabled) do
+    if vim.api.nvim_buf_is_valid(buf) and not codediff_buffer(buf) and not has_diff_window(buf) then
+      md_diff_disabled[buf] = nil
+      set_render_markdown(buf, true)
+    end
+  end
+end
+
+local function win_in_diff(win)
+  if vim.api.nvim_get_option_value("diff", { win = win }) then return true end
+  local session_mod = package.loaded["codediff.ui.lifecycle.session"]
+  if session_mod then
+    for _, sess in pairs(session_mod.get_active_diffs()) do
+      if sess.original_win == win or sess.modified_win == win then return true end
+    end
+  end
+  return false
+end
+
+local function sync_winbar(win)
+  if not vim.api.nvim_win_is_valid(win) then return end
+  if win_in_diff(win) then
+    -- 关闭 diff 窗口上的 winbar（dropbar 的 bar.enable 已阻止其重新 attach）
+    vim.api.nvim_set_option_value("winbar", "", { win = win })
+  else
+    -- 离开 diff 后主动恢复 winbar，不必等 dropbar 的 attach 事件
+    pcall(function() require("dropbar.utils.bar").attach(vim.api.nvim_win_get_buf(win), win) end)
+  end
+end
+
+vim.api.nvim_create_autocmd({ "WinEnter", "BufWinEnter" }, {
+  group = diff_group,
+  callback = function()
+    local win = vim.api.nvim_get_current_win()
+    sync_winbar(win)
+    sync_render_markdown_diff()
+    -- codediff 的 session 注册/更新晚于 buffer/窗口就绪，延迟复查一次
+    vim.schedule(function()
+      if vim.api.nvim_win_is_valid(win) then
+        vim.api.nvim_win_call(win, sync_render_markdown_diff)
+        sync_winbar(win)
+      end
+    end)
   end,
+})
+
+vim.api.nvim_create_autocmd("OptionSet", {
+  group = diff_group,
+  pattern = "diff",
+  callback = function()
+    local win = vim.api.nvim_get_current_win()
+    vim.schedule(function()
+      if vim.api.nvim_win_is_valid(win) then
+        vim.api.nvim_win_call(win, sync_render_markdown_diff)
+        sync_winbar(win)
+      end
+    end)
+  end,
+})
+
+-- codediff.nvim 不使用 vim 的 'diff' 选项，通过它的 User 事件同步两个 pane
+vim.api.nvim_create_autocmd("User", {
+  group = diff_group,
+  pattern = { "CodeDiffOpen", "CodeDiffFileSelect" },
+  callback = function(args)
+    local tabpage = args.data and args.data.tabpage
+    if not tabpage then return end
+    vim.schedule(function()
+      local lifecycle = package.loaded["codediff.ui.lifecycle"]
+      if not lifecycle then return end
+      local sess = lifecycle.get_session(tabpage)
+      if not sess then return end
+      for _, win in ipairs { sess.original_win, sess.modified_win } do
+        if win and vim.api.nvim_win_is_valid(win) then vim.api.nvim_win_call(win, sync_render_markdown_diff) end
+      end
+    end)
+  end,
+})
+
+vim.api.nvim_create_autocmd("User", {
+  group = diff_group,
+  pattern = "CodeDiffClose",
+  callback = function() vim.schedule(reenable_all) end,
+})
+
+vim.api.nvim_create_autocmd("BufDelete", {
+  group = diff_group,
+  callback = function(args) md_diff_disabled[args.buf] = nil end,
 })
 
 require("ai_copy").setup()
