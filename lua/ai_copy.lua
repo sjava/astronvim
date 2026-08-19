@@ -41,6 +41,8 @@ local function visual_copy()
   local lines = vim.api.nvim_buf_get_lines(0, start_line - 1, end_line, false)
 
   copy_to_clipboard(table.concat(lines, "\n"), start_line, end_line)
+
+  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)
 end
 
 ----------------------------------------------------------------------
